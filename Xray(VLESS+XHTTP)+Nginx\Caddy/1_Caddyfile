@@ -1,6 +1,6 @@
 {
 	order reverse_proxy before route
-	admin off
+	admin off #禁用 admin API。（选配）
 	persist_config off
 	log {
 		output file /var/log/caddy/error.log #错误日志的文件地址
@@ -35,7 +35,7 @@
 	reverse_proxy /VLSpdG9k/* 127.0.0.1:2023 { #与 VLESS+XHTTP 应用中 path 对应，转发给本机 VLESS+XHTTP 监听端口。
 		flush_interval -1
 		transport http {
-			versions 1.1 h2c
+			versions h2c 2
 		}
 	}
 
