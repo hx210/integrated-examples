@@ -1,6 +1,6 @@
 {
   "admin": {
-    "disabled": true,
+    "disabled": true, //禁用 admin API。（选配）
     "config": {
       "persist": false
     }
@@ -37,7 +37,7 @@
   "apps": {
     "layer4": {
       "servers": {
-        "sni": {
+        "tcpsni": {
           "listen": [":443"],
           "routes": [{
             "match": [{
@@ -47,10 +47,10 @@
             }],
             "handle": [{
               "handler": "proxy",
+              "proxy_protocol": "v1", //开启 PROXY protocol 发送。v1 或 v2 表示 PROXY protocol 版本。
               "upstreams": [{
                 "dial": ["unix/@uds5443.sock"] //转给 VLESS+Vision+REALITY 监听进程
-              }],
-              "proxy_protocol": "v1" //启用 PROXY protocol 发送。v1 或 v2 表示 PROXY protocol 版本。
+              }]
             }]
           },
           {
@@ -61,10 +61,10 @@
             }],
             "handle": [{
               "handler": "proxy",
+              "proxy_protocol": "v1", //开启 PROXY protocol 发送。v1 或 v2 表示 PROXY protocol 版本。
               "upstreams": [{
                 "dial": ["unix/@uds6443.sock"] //转给 Trojan+RAW+TLS 监听进程
-              }],
-              "proxy_protocol": "v1" //启用 PROXY protocol 发送。v1 或 v2 表示 PROXY protocol 版本。
+              }]
             }]
           },
           {
@@ -73,10 +73,10 @@
             }],
             "handle": [{
               "handler": "proxy",
+              "proxy_protocol": "v1", //开启 PROXY protocol 发送。v1 或 v2 表示 PROXY protocol 版本。
               "upstreams": [{
                 "dial": ["127.0.0.1:7443"] //转给 HTTP/3 server 本地监听端口
-              }],
-              "proxy_protocol": "v1" //启用 PROXY protocol 发送。v1 或 v2 表示 PROXY protocol 版本。
+              }]
             }]
           }]
         },
@@ -159,8 +159,8 @@
           },
           {
             "match": [{
-              "path": ["/SALdGZ9k/*"], //与 Shadowsocks+gRPC 应用中 serviceName 对应
-              "protocol": "grpc"
+              "protocol": "grpc",
+              "path": ["/SALdGZ9k/*"] //与 Shadowsocks+gRPC 应用中 serviceName 对应
             }],
             "handle": [{
               "handler": "reverse_proxy",
@@ -208,8 +208,8 @@
               "handler": "headers",
               "response": {
                 "set": {
-                  "Strict-Transport-Security": ["max-age=31536000; includeSubDomains; preload"], //启用 HSTS
-                  "Alt-Svc": ["h3=\":443\"; ma=2592000"] //通告 HTTP/3 server 的可用性。（对外使用代理的 UDP 443 端口才需要配置）
+                  "Alt-Svc": ["h3=\":443\"; ma=2592000"], //通告 HTTP/3 server 的可用性。（代理 UDP 443 端口才需要配置）
+                  "Strict-Transport-Security": ["max-age=31536000; includeSubDomains; preload"] //启用 HSTS
                 }
               }
             },
